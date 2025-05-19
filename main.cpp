@@ -6,56 +6,55 @@
 #include <deque>
 
 int main() {
-    std::ifstream inputDatei("../../input/input.txt");
-     // Datei öffnen
+    std::ifstream inputFile("../../input/input.txt");
 
-    if (!inputDatei.is_open()) {
-        std::cerr << "Konnte die Datei nicht oeffnen!" << std::endl;
+    if (!inputFile.is_open()) {
+        std::cerr << "Could not open file!" << std::endl;
         return 1;
     }
 
-    int etappen, tage, zahlImStream;
-    std::vector<int> etappenLaengen;
+    int stages, days, numberInStream;
+    std::vector<int> stagesLengths;
 
-    inputDatei >> etappen;
-    inputDatei >> tage;
-    while (inputDatei >> zahlImStream) {
-        etappenLaengen.push_back(zahlImStream);
+    inputFile >> stages;
+    inputFile >> days;
+    while (inputFile >> numberInStream) {
+        stagesLengths.push_back(numberInStream);
     }
 
-    std::cout << "Eingelesene Etappen: " << etappen << std::endl;
-    std::cout << "Eingelesene Tage: " << tage << std::endl;
+    std::cout << "Read stages: " << stages << std::endl;
+    std::cout << "Read days: " << days << std::endl;
 
-    std::cout << "Eingelesene EtappenLaengen: [";
-    if (!etappenLaengen.empty()) {
-        for (size_t i = 0; i < etappenLaengen.size() - 1; ++i) {
-            std::cout << etappenLaengen[i] << ", ";
+    std::cout << "Read stagesLengths: [";
+    if (!stagesLengths.empty()) {
+        for (size_t i = 0; i < stagesLengths.size() - 1; ++i) {
+            std::cout << stagesLengths[i] << ", ";
         }
-        std::cout << etappenLaengen.back();
+        std::cout << stagesLengths.back();
     }
     std::cout << "]" << std::endl;
 
 
 
     // Binäre Suche zur Bestimmung der minimalen maximalen Tagesstrecke
-    int low = *std::max_element(etappenLaengen.begin(), etappenLaengen.end());
-    int high = std::accumulate(etappenLaengen.begin(), etappenLaengen.end(), 0);
+    int low = *std::max_element(stagesLengths.begin(), stagesLengths.end());
+    int high = std::accumulate(stagesLengths.begin(), stagesLengths.end(), 0);
     int minimalMax;
 
     while (low < high) {
         int mid = low + (high - low) / 2;
-        int tageBenoetigt = 1;
-        int summe = 0;
+        int daysNeeded = 1;
+        int sumOfStages = 0;
 
-        for (int distanz : etappenLaengen) {
-            if (summe + distanz > mid) {
-                tageBenoetigt++;
-                summe = 0;
+        for (int distanz : stagesLengths) {
+            if (sumOfStages + distanz > mid) {
+                daysNeeded++;
+                sumOfStages = 0;
             }
-            summe += distanz;
+            sumOfStages += distanz;
         }
 
-        if (tageBenoetigt <= tage) {
+        if (daysNeeded <= days) {
             high = mid;
         } else {
             low = mid + 1;
@@ -64,27 +63,27 @@ int main() {
     minimalMax = low;
 
     // Gruppenbildung für die Ausgabe
-    std::deque<int> gruppen;
+    std::deque<int> stageGroups;
     int currentSum = 0;
-    int remainingDays = tage;
+    int remainingDays = days;
 
     // Rückwärts durch die Etappen gehen
-    for (auto it = etappenLaengen.rbegin(); it != etappenLaengen.rend(); ++it) {
-        if (currentSum + *it > minimalMax || (remainingDays - 1) > std::distance(it, etappenLaengen.rend()) - 1) {
-            gruppen.push_front(currentSum);
+    for (auto it = stagesLengths.rbegin(); it != stagesLengths.rend(); ++it) {
+        if (currentSum + *it > minimalMax || (remainingDays - 1) > std::distance(it, stagesLengths.rend()) - 1) {
+            stageGroups.push_front(currentSum);
             currentSum = 0;
             remainingDays--;
         }
         currentSum += *it;
     }
-    gruppen.push_front(currentSum); // Letzte Gruppe hinzufügen
+    stageGroups.push_front(currentSum); // Letzte Gruppe hinzufügen
 
     // Ausgabe der Tagesstrecken
-    for (size_t i = 0; i < gruppen.size(); ++i) {
-        std::cout << (i + 1) << " . Tag : " << gruppen[i] << " km\n";
+    for (size_t i = 0; i < stageGroups.size(); ++i) {
+        std::cout << (i + 1) << ". Day: " << stageGroups[i] << " km\n";
     }
-    std::cout << "Maximum : " << minimalMax << " km" << std::endl;
+    std::cout << "Max: " << minimalMax << " km" << std::endl;
 
-    inputDatei.close();
+    inputFile.close();
     return 0;
 }

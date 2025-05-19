@@ -6,8 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(Etappenproblem main.cpp
-    input/input.txt 
-    input/Testaufgabe-Programmierer.pdf)
+    input/input.txt)
 
 include(GNUInstallDirs)
 install(TARGETS Etappenproblem
