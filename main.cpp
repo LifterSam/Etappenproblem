@@ -24,6 +24,7 @@ int readInputFile(int& stages, int& days, std::vector<int>& stagesLengths){
     std::cout << "Read stages: " << stages << std::endl;
     std::cout << "Read days: " << days << std::endl;
 
+    // a bit of formatting to make it look like an array
     std::cout << "Read stagesLengths: [";
     if (!stagesLengths.empty()) {
         for (size_t i = 0; i < stagesLengths.size() - 1; ++i) {
@@ -39,7 +40,7 @@ int readInputFile(int& stages, int& days, std::vector<int>& stagesLengths){
 }
 
 
-void maxLengthPerDay(int& days, int& minimalMax, std::vector<int>& stagesLengths){
+int maxLengthPerDay(int days, const std::vector<int>& stagesLengths){
     int low = *std::max_element(stagesLengths.begin(), stagesLengths.end());
     int high = std::accumulate(stagesLengths.begin(), stagesLengths.end(), 0);
 
@@ -48,12 +49,12 @@ void maxLengthPerDay(int& days, int& minimalMax, std::vector<int>& stagesLengths
         int daysNeeded = 1;
         int sumOfStages = 0;
 
-        for (int distanz : stagesLengths) {
-            if (sumOfStages + distanz > mid) {
+        for (int distance : stagesLengths) {
+            if (sumOfStages + distance > mid) {
                 daysNeeded++;
                 sumOfStages = 0;
             }
-            sumOfStages += distanz;
+            sumOfStages += distance;
         }
 
         if (daysNeeded <= days) {
@@ -62,25 +63,15 @@ void maxLengthPerDay(int& days, int& minimalMax, std::vector<int>& stagesLengths
             low = mid + 1;
         }
     }
-    minimalMax = low;
+    return low;
 }
 
 
-
-int main() {
-
-    int stages, days, minimalMax;
-    std::vector<int> stagesLengths;
-
-    readInputFile(stages, days, stagesLengths);
-    maxLengthPerDay(days, minimalMax, stagesLengths);
-
-
+std::deque<int> groupStagesPerDay(int days, int minimalMax, const std::vector<int>& stagesLengths) {
     std::deque<int> stageGroups;
     int currentSum = 0;
     int remainingDays = days;
 
-    // iterating backwards through the stages
     for (auto it = stagesLengths.rbegin(); it != stagesLengths.rend(); ++it) {
         if (currentSum + *it > minimalMax || (remainingDays - 1) > std::distance(it, stagesLengths.rend()) - 1) {
             stageGroups.push_front(currentSum);
@@ -89,12 +80,28 @@ int main() {
         }
         currentSum += *it;
     }
-    stageGroups.push_front(currentSum); // add last group
+    stageGroups.push_front(currentSum);
+    return stageGroups;
+}
 
+
+int main() {
+
+    int stages, days, minimalMax;
+    std::vector<int> stagesLengths;
+    std::deque<int> stageGroups;
+
+    readInputFile(stages, days, stagesLengths);
+    minimalMax = maxLengthPerDay(days, stagesLengths);
+    stageGroups = groupStagesPerDay(days, minimalMax, stagesLengths);
+
+    // output
+    std::cout << std::endl;
     for (size_t i = 0; i < stageGroups.size(); ++i) {
         std::cout << (i + 1) << ". Day: " << stageGroups[i] << " km\n";
     }
     std::cout << "Max: " << minimalMax << " km" << std::endl;
+    std::cout << std::endl;
 
     return 0;
 }
