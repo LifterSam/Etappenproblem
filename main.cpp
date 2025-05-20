@@ -5,17 +5,16 @@
 #include <algorithm>
 #include <deque>
 
-int main() {
+
+int readInputFile(int& stages, int& days, std::vector<int>& stagesLengths){
     std::ifstream inputFile("../../input/input.txt");
 
     if (!inputFile.is_open()) {
         std::cerr << "Could not open file!" << std::endl;
-        return 1;
+        return -1;
     }
 
-    int stages, days, numberInStream;
-    std::vector<int> stagesLengths;
-
+    int numberInStream;
     inputFile >> stages;
     inputFile >> days;
     while (inputFile >> numberInStream) {
@@ -34,12 +33,15 @@ int main() {
     }
     std::cout << "]" << std::endl;
 
+    inputFile.close();
+
+    return 0;
+}
 
 
-    // Binäre Suche zur Bestimmung der minimalen maximalen Tagesstrecke
+void maxLengthPerDay(int& days, int& minimalMax, std::vector<int>& stagesLengths){
     int low = *std::max_element(stagesLengths.begin(), stagesLengths.end());
     int high = std::accumulate(stagesLengths.begin(), stagesLengths.end(), 0);
-    int minimalMax;
 
     while (low < high) {
         int mid = low + (high - low) / 2;
@@ -61,13 +63,24 @@ int main() {
         }
     }
     minimalMax = low;
+}
 
-    // Gruppenbildung für die Ausgabe
+
+
+int main() {
+
+    int stages, days, minimalMax;
+    std::vector<int> stagesLengths;
+
+    readInputFile(stages, days, stagesLengths);
+    maxLengthPerDay(days, minimalMax, stagesLengths);
+
+
     std::deque<int> stageGroups;
     int currentSum = 0;
     int remainingDays = days;
 
-    // Rückwärts durch die Etappen gehen
+    // iterating backwards through the stages
     for (auto it = stagesLengths.rbegin(); it != stagesLengths.rend(); ++it) {
         if (currentSum + *it > minimalMax || (remainingDays - 1) > std::distance(it, stagesLengths.rend()) - 1) {
             stageGroups.push_front(currentSum);
@@ -76,14 +89,12 @@ int main() {
         }
         currentSum += *it;
     }
-    stageGroups.push_front(currentSum); // Letzte Gruppe hinzufügen
+    stageGroups.push_front(currentSum); // add last group
 
-    // Ausgabe der Tagesstrecken
     for (size_t i = 0; i < stageGroups.size(); ++i) {
         std::cout << (i + 1) << ". Day: " << stageGroups[i] << " km\n";
     }
     std::cout << "Max: " << minimalMax << " km" << std::endl;
 
-    inputFile.close();
     return 0;
 }
