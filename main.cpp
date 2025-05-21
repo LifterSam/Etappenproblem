@@ -92,7 +92,11 @@ int main() {
     std::deque<int> stageGroups;
 
     readInputFile(stages, days, stagesLengths);
+
+    // finding out minimal maximal distance with binary search
     minimalMax = maxLengthPerDay(days, stagesLengths);
+
+    // generating output groups for walked km per day
     stageGroups = groupStagesPerDay(days, minimalMax, stagesLengths);
 
     // output
