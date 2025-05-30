@@ -1,5 +1,3 @@
-By Thomas Engelmann
-
 This is my personal solution to a Cipsoft Coding Interview Challenge May 2025.
 
 It implements `binary search on answer` as the algorithm to find the minimal maximum of travelling
@@ -14,4 +12,4 @@ this could be implemented fast by just taking out the functions. They should be 
 implemented them.
 
 Best Regards
-Thomas 
+
