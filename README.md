@@ -1,4 +1,4 @@
-This is my personal solution to a Cipsoft Coding Interview Challenge May 2025.
+This is my personal solution to a coding interview challenge may 2025.
 
 It implements `binary search on answer` as the algorithm to find the minimal maximum of travelling
 distances for set stages and set days. Input data is read via the `input.txt` file in the subdirectory
@@ -12,4 +12,5 @@ this could be implemented fast by just taking out the functions. They should be 
 implemented them.
 
 Best Regards
+LifterSam
 
